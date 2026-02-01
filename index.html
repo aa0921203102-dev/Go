@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>泰國代購 12.0 - 戰略 ROI 指數版</title>
+    <title>泰國代購 12.3 - 多重復原保險版</title>
     <style>
-        :root { --primary: #5d4037; --accent: #a89078; --bg: #fdfbf7; --card: #ffffff; --text: #1a1a1a; --sub: #78716c; --log-bg: #2d2a28; --gold: #b45309; }
+        :root { --primary: #5d4037; --accent: #a89078; --bg: #fdfbf7; --card: #ffffff; --text: #1a1a1a; --sub: #78716c; --log-bg: #2d2a28; --gold: #b45309; --danger: #b91c1c; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 12px; padding-bottom: 100px; color: var(--text); -webkit-tap-highlight-color: transparent; }
         .summary-bar { display: flex; justify-content: space-around; background: var(--log-bg); color: white; padding: 16px; border-radius: 16px; position: sticky; top: 10px; z-index: 1000; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         .summary-value { font-size: 1.1rem; font-weight: 800; color: #d6d3d1; }
@@ -15,11 +15,8 @@
         .card-preview { display: grid; grid-template-columns: 80px 1fr auto; gap: 14px; align-items: center; cursor: pointer; }
         .item-img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: #fafaf9; border: 1px solid #e7e5e4; }
         .item-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-        
-        /* ROI 數值標籤 */
         .roi-tag { font-size: 10px; padding: 3px 10px; border-radius: 8px; font-weight: 900; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; border: 1px solid rgba(0,0,0,0.1); }
         .score-val { font-size: 13px; margin-left: 2px; }
-
         .q-badge { background: var(--primary); color: white; padding: 6px 14px; border-radius: 12px; font-weight: 800; font-size: 1.2rem; }
         .details-area { display: none; padding-top: 16px; border-top: 1px solid #f5f5f4; margin-top: 16px; }
         .card.active .details-area { display: block; }
@@ -35,6 +32,8 @@
         .textarea-right { flex: 1; background: #ffffff; }
         .copy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 20px; }
         .btn-copy { padding: 12px 4px; font-size: 12px; border-radius: 10px; border: 1.5px solid #d6d3d1; background: #fff; color: var(--primary); cursor: pointer; font-weight: 700; text-align: center; }
+        .btn-delete { margin-top: 20px; width: 100%; padding: 12px; background: #fff1f2; color: var(--danger); border: 1px solid #fecaca; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; }
+        .btn-undo-pill { background: #444; color: #fff; border: none; padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; margin-left: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .log-section { background: white; border-radius: 16px; padding: 12px; border: 1px solid #e7e5e4; margin-bottom: 15px; }
         .log-container { height: 110px; overflow-y: auto; font-size: 12px; line-height: 1.8; color: var(--sub); }
         input[type="file"] { display: none; }
@@ -46,24 +45,43 @@
         <div style="text-align:center;"><span style="font-size:11px; opacity:0.8;">預算總獲利</span><span class="summary-value" id="tP">$0</span></div>
     </div>
     <div class="log-section">
-        <div class="log-container" id="logList">對帳日誌：12.0 戰略含金量指數模組已啟動...</div>
+        <div class="log-container" id="logList">對帳日誌：12.3 多重復原保險版已啟動 [2/2 曼谷連線]...</div>
         <textarea id="importJson" style="width:100%; height:45px; border-radius:12px; border:1px solid #e7e5e4; padding:8px; margin-top:10px;" placeholder="在此貼上快速版 J 代碼..."></textarea>
         <button onclick="quickImport()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:800; margin-top:10px;">📥 匯入戰略情報包</button>
     </div>
     <div id="list"></div>
-
     <script>
-        let items = JSON.parse(localStorage.getItem('daigou_v12_0')) || [];
-        let openIds = JSON.parse(localStorage.getItem('daigou_v12_0_openIds')) || [];
+        let items = JSON.parse(localStorage.getItem('daigou_v12_3')) || [];
+        let openIds = JSON.parse(localStorage.getItem('daigou_v12_3_openIds')) || [];
+        let deleteStack = []; // 多重復原棧
         const RATE = 1.01;
 
-        function addLog(msg) {
+        function addLog(msg, undoable = false) {
             const log = document.getElementById('logList');
             const div = document.createElement('div');
             div.style.borderBottom = "1px solid #f5f5f4";
-            div.innerHTML = `<span style="color:#a8a29e;">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+            let content = `<span style="color:#a8a29e;">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+            if(undoable) content += `<button class="btn-undo-pill" onclick="undoDelete()">↩️ 復原 (${deleteStack.length})</button>`;
+            div.innerHTML = content;
             log.prepend(div);
-            if(log.children.length > 20) log.lastChild.remove();
+            if(log.children.length > 25) log.lastChild.remove();
+        }
+
+        function deleteItem(idx) {
+            const item = items[idx];
+            deleteStack.push({ data: JSON.parse(JSON.stringify(item)), index: idx }); // 深度備份
+            const name = item.n;
+            items.splice(idx, 1);
+            save();
+            addLog(`已刪除 ${name}`, true);
+        }
+
+        function undoDelete() {
+            if(deleteStack.length === 0) return;
+            const lastDeleted = deleteStack.pop();
+            items.splice(lastDeleted.index, 0, lastDeleted.data);
+            save();
+            addLog(`已救回 ${lastDeleted.data.n}！${deleteStack.length > 0 ? '(還有商品可復原)' : ''}`, deleteStack.length > 0);
         }
 
         function quickImport() {
@@ -80,7 +98,7 @@
         function toggleCard(id) {
             const idx = openIds.indexOf(id);
             if(idx > -1) openIds.splice(idx, 1); else openIds.push(id);
-            localStorage.setItem('daigou_v12_0_openIds', JSON.stringify(openIds)); render();
+            localStorage.setItem('daigou_v12_3_openIds', JSON.stringify(openIds)); render();
         }
 
         function handleImg(e, idx) {
@@ -92,7 +110,7 @@
                     const canvas = document.createElement('canvas'); const MAX_WIDTH = 150;
                     const scale = MAX_WIDTH / img.width; canvas.width = MAX_WIDTH; canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    items[idx].img = canvas.toDataURL('image/jpeg', 0.6); save(); addLog(`拍好 ${items[idx].n} 實拍圖`);
+                    items[idx].img = canvas.toDataURL('image/jpeg', 0.6); save(); addLog(`拍好實物圖`);
                 };
                 img.src = event.target.result;
             };
@@ -100,21 +118,16 @@
         }
 
         function generateCopy(idx, style) {
-            const it = items[idx]; const p = `NT$${it.sp}`; const detail = it.desc || "這款真的是泰國連線必囤神物！";
+            const it = items[idx]; const p = `NT$${it.sp}`; const detail = it.desc || "泰國連線必囤神物！";
             const head = `【 ${it.n} 】\n`;
             let text = "";
-            // 專業通人性行銷文案邏輯 (避開陸用語)
-            if(style === 'xhs') {
-                text = `${head}泰國必買推薦✨ 真的不想只有我囤貨😭\n連曼谷櫃姐都說這款最近被搶瘋了！${detail}\n親測質感超讚，放在家裡整個品味都升級。真心推薦一定要囤，沒買到會心痛那種！\n\n💰 專業預購價：${p}\n📍 採購地點：${it.loc}\n📥 私訊截圖+1 登記\n#泰國代購 #曼谷連線 #好物分享`;
-            } else if(style === 'ig') {
-                text = `${head}Bangkok Live 🇹🇭 連線實拍！\n🛒 敲碗追加中🔥 手速慢就沒了！\n${detail}\n這批帶回台灣就結單囉✨\n\n價格：${p}\n📥 私訊截圖+1 登記`;
-            } else {
-                text = `${head}說真的，這款用過真的回不去...\n解決了最近最煩惱的痛點：${detail}\n一組 ${p}，想要的直接私訊截圖+1。`;
-            }
-            navigator.clipboard.writeText(text); alert(`✅ 已複製：${it.n}`);
+            if(style === 'xhs') text = `${head}泰國必買推薦✨ 質感真的好到哭😭\n${detail}\n💰 預購價：${p}\n📍 採購：${it.loc}\n#泰國代購 #曼谷連線`;
+            else if(style === 'ig') text = `${head}Bangkok Live 🇹🇭 現場實拍！\n🛒 追加中🔥 ${detail}\n價格：${p}\n📥 私訊截圖+1`;
+            else text = `${head}說真的，如果妳跟我一樣有這種困擾...\n${detail}\n這款直接解決我的大痛點。一組 ${p}，想要的私訊截圖+1。`;
+            navigator.clipboard.writeText(text); alert(`✅ 已複製專屬文案！`);
         }
 
-        function save() { localStorage.setItem('daigou_v12_0', JSON.stringify(items)); render(); }
+        function save() { localStorage.setItem('daigou_v12_3', JSON.stringify(items)); render(); }
 
         function render() {
             const container = document.getElementById('list'); container.innerHTML = "";
@@ -129,67 +142,60 @@
                     const costPerUnit = item.mp * RATE;
                     const profitPerUnit = item.sp - costPerUnit;
                     tw += (item.w * item.q) / 1000; tp += (profitPerUnit * item.q);
-                    
-                    // 含金量指數 (1-10分) 計算
-                    let score = (profitPerUnit / (item.w * item.v)) * 30; // 常數調整使鼻通接近 10
+                    let score = (profitPerUnit / (item.w * item.v)) * 30;
                     score = Math.min(10.0, Math.max(1.0, score)).toFixed(1);
-                    
                     let roiLabel = "📦 搬運"; let roiColor = "#78716c"; let roiBg = "#f5f5f4";
-                    if (profitPerUnit > 1000) { roiLabel = "💎 精品"; roiColor = "#991b1b"; roiBg = "#fee2e2"; }
-                    else if (score >= 9.0) { roiLabel = "💎 精品"; roiColor = "#991b1b"; roiBg = "#fee2e2"; }
+                    if (profitPerUnit > 1000 || score >= 9.0) { roiLabel = "💎 精品"; roiColor = "#991b1b"; roiBg = "#fee2e2"; }
                     else if (score >= 7.0) { roiLabel = "🔥 金礦"; roiColor = "#92400e"; roiBg = "#fef3c7"; }
                     else if (score >= 5.0) { roiLabel = "✅ 穩定"; roiColor = "#166534"; roiBg = "#dcfce7"; }
                     else if (score >= 3.0) { roiLabel = "⚖️ 合理"; roiColor = "#374151"; roiBg = "#f3f4f6"; }
-                    
                     const isActive = openIds.includes(item.id) ? 'active' : '';
                     const marginFactor = 1 - (item.margin / 100);
                     const minSP = Math.ceil((item.lp * RATE) / marginFactor);
                     const maxSP = Math.ceil((item.mp * RATE) / marginFactor);
-
                     container.innerHTML += `
                         <div class="card ${isActive}">
                             <div class="card-preview" onclick="toggleCard(${item.id})">
                                 <label onclick="event.stopPropagation()"><img src="${item.img || 'https://via.placeholder.com/80?text=拍實物'}" class="item-img"><input type="file" accept="image/*" onchange="handleImg(event, ${idx})"></label>
                                 <div style="flex:1;"><span class="item-title">${item.n}</span>
                                     <div class="roi-tag" style="background:${roiBg}; color:${roiColor}; border-color:${roiColor}33;">${roiLabel}<span class="score-val">${score}</span></div>
-                                    <div style="font-size:11px; color:var(--sub); margin-top:4px;">蝦皮正品多數價：<b style="color:#b91c1c;">$${item.majority}</b></div>
+                                    <div style="font-size:11px; color:var(--sub); margin-top:4px;">蝦皮行情多數價：<b>$${item.majority}</b></div>
                                 </div><div class="q-badge">${item.q}</div>
                             </div>
                             <div class="details-area">
                                 <div class="store-group">
-                                    <span style="font-size:12px; color:var(--sub); font-weight:600; margin-bottom:6px; display:block;">採購商店/體格設定</span>
                                     <div style="display:flex; gap:8px;">
                                         <select class="custom-select" style="flex:2;" onchange="if(this.value==='CUSTOM'){items[${idx}].isCustomStore=true;}else{items[${idx}].isCustomStore=false;items[${idx}].loc=this.value;} save();" onclick="event.stopPropagation()">
-                                            <option value="${item.loc}">📍 當前：${item.loc}</option>
+                                            <option value="${item.loc}">📍 ${item.loc}</option>
                                             <option value="Big C">Big C</option><option value="Lotus's">Lotus's</option>
                                             <option value="Boots">Boots</option><option value="7-11">7-11</option>
                                             <option value="藥局">藥局</option><option value="CUSTOM">➕ 自訂...</option>
                                         </select>
                                         <select class="custom-select" style="flex:1;" onchange="items[${idx}].v=this.value; save();" onclick="event.stopPropagation()">
                                             <option value="${item.v || 2}">體積: ${item.v || 2}</option>
-                                            <option value="1">極小(1)</option><option value="2">普通(2)</option>
-                                            <option value="4">佔位(4)</option><option value="5">巨大(5)</option>
+                                            <option value="1">1</option><option value="2">2</option><option value="4">4</option><option value="5">5</option>
                                         </select>
                                     </div>
-                                    ${item.isCustomStore ? `<input type="text" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--accent); margin-top:8px; box-sizing:border-box;" placeholder="輸入新店名..." value="${item.loc}" onchange="items[${idx}].loc=this.value; save();" onclick="event.stopPropagation()">` : ''}
+                                    ${item.isCustomStore ? `<input type="text" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--accent); margin-top:8px; box-sizing:border-box;" value="${item.loc}" onchange="items[${idx}].loc=this.value; save();" onclick="event.stopPropagation()">` : ''}
                                 </div>
                                 <div class="price-panel">
-                                    <div style="font-size:12px; color:var(--sub); margin-bottom:8px;">🎯 毛利目標：<input type="number" class="input-inline" value="${item.margin}" oninput="items[${idx}].margin=this.value; render();" onclick="event.stopPropagation()"> % | 建議：<b>$${minSP}~$${maxSP}</b></div>
-                                    <div style="display:flex; justify-content:space-between; align-items:center;"><span>專業定價 NT$ <input type="number" class="input-price" value="${item.sp}" oninput="items[${idx}].sp=this.value; render();" onclick="event.stopPropagation()"></span><span style="color:var(--primary); font-weight:700;">實收獲利: $${Math.round(profitPerUnit * item.q)}</span></div>
+                                    <div style="font-size:12px; color:var(--sub); margin-bottom:8px;">🎯 毛利：<input type="number" class="input-inline" value="${item.margin}" oninput="items[${idx}].margin=this.value; render();" onclick="event.stopPropagation()"> % | 建議：$${minSP}~$${maxSP}</div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center;"><span>定價 $ <input type="number" class="input-price" value="${item.sp}" oninput="items[${idx}].sp=this.value; render();" onclick="event.stopPropagation()"></span><span style="color:var(--primary); font-weight:700;">獲利: $${Math.round(profitPerUnit * item.q)}</span></div>
                                 </div>
                                 <div class="counter-row">
-                                    <button class="btn-count" onclick="items[${idx}].q=Math.max(0,items[${idx}].q-1); addLog('${item.n} -1'); save(); event.stopPropagation();">－</button>
-                                    <button class="btn-count" onclick="items[${idx}].q++; addLog('${item.n} +1'); save(); event.stopPropagation();" style="color:var(--primary); border-color:var(--primary);">＋</button>
+                                    <button class="btn-count" onclick="items[${idx}].q=Math.max(0,items[${idx}].q-1); save(); event.stopPropagation();">－</button>
+                                    <button class="btn-count" onclick="items[${idx}].q++; save(); event.stopPropagation();" style="color:var(--primary); border-color:var(--primary);">＋</button>
                                 </div>
                                 <div class="note-wrapper">
-                                    <textarea class="textarea-left" placeholder="✍️ 口味/規格/細項" oninput="items[${idx}].noteL=this.value; localStorage.setItem('daigou_v12_0', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteL || ''}</textarea>
-                                    <textarea class="textarea-right" placeholder="👤 買家名" oninput="items[${idx}].noteR=this.value; localStorage.setItem('daigou_v12_0', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteR || ''}</textarea>
+                                    <textarea class="textarea-left" placeholder="✍️ 細項" oninput="items[${idx}].noteL=this.value; localStorage.setItem('daigou_v12_3', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteL || ''}</textarea>
+                                    <textarea class="textarea-right" placeholder="👤 買家" oninput="items[${idx}].noteR=this.value; localStorage.setItem('daigou_v12_3', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteR || ''}</textarea>
                                 </div>
                                 <div class="copy-grid">
-                                    <div class="btn-copy" onclick="generateCopy(${idx}, 'xhs'); event.stopPropagation();">小紅書爆紅</div>
-                                    <div class="btn-copy" onclick="generateCopy(${idx}, 'ig')">IG 連線</div>
+                                    <div class="btn-copy" onclick="generateCopy(${idx}, 'xhs'); event.stopPropagation();">小紅書</div>
+                                    <div class="btn-copy" onclick="generateCopy(${idx}, 'ig')">IG</div>
                                     <div class="btn-copy" onclick="generateCopy(${idx}, 'threads')">Threads</div>
                                 </div>
+                                <button class="btn-delete" onclick="deleteItem(${idx}); event.stopPropagation();">🗑️ 刪除此項產品</button>
                             </div>
                         </div>`;
                 });
