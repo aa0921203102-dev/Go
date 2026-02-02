@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>泰國代購 12.7 - 曼谷連線完全體(文案全開版)</title>
+    <title>泰國代購 12.8 - 曼谷連線完全體(精準通路版)</title>
     <style>
         :root { --primary: #5d4037; --accent: #a89078; --bg: #fdfbf7; --card: #ffffff; --text: #1a1a1a; --sub: #78716c; --log-bg: #2d2a28; --gold: #b45309; --danger: #b91c1c; --safe: #166534; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 12px; padding-bottom: 100px; color: var(--text); -webkit-tap-highlight-color: transparent; }
@@ -24,8 +24,9 @@
         .details-area { display: none; padding-top: 16px; border-top: 1px solid #f5f5f4; margin-top: 16px; }
         .card.active .details-area { display: block; }
         .alert-box { font-size: 11px; background: #fffbeb; color: #92400e; border: 1px solid #fde68a; padding: 8px; border-radius: 8px; margin-bottom: 10px; line-height: 1.4; }
-        .price-panel { background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
         .market-info { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 10px; color: var(--sub); margin-bottom: 10px; text-align: center; background: #fff; padding: 8px; border-radius: 8px; border: 1px solid #eee; }
+        .other-stores-tip { font-size: 10px; color: var(--sub); margin-bottom: 12px; background: #fafafa; padding: 6px 10px; border-radius: 6px; border-left: 3px solid var(--accent); }
+        .price-panel { background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
         .input-inline { width: 45px; padding: 4px; border: 1px solid var(--accent); border-radius: 6px; text-align: center; font-weight: bold; }
         .input-price { width: 90px; padding: 8px; border: 2px solid var(--primary); border-radius: 8px; text-align: center; font-size: 1.1rem; font-weight: 800; color: var(--primary); }
         .custom-select { width: 100%; padding: 10px; border-radius: 10px; border: 1.5px solid #d6d3d1; font-size: 13px; margin-bottom: 8px; color: var(--primary); font-weight: 600; background: #fff; }
@@ -55,7 +56,7 @@
     <div class="filter-bar" id="filterBar"></div>
 
     <div class="log-section">
-        <div class="log-container" id="logList">連線日誌：12.7 文案全開+精華版啟動...</div>
+        <div class="log-container" id="logList">連線日誌：12.8 精準分類+通路排行版...</div>
         <textarea id="importJson" style="width:100%; height:45px; border-radius:12px; border:1px solid #e7e5e4; padding:8px; margin-top:10px;" placeholder="貼上 JSON 代碼包..."></textarea>
         <button onclick="quickImport()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:800; margin-top:10px; cursor:pointer;">📥 匯入情報與智慧分類</button>
     </div>
@@ -68,11 +69,19 @@
     </div>
 
     <script>
-        let items = JSON.parse(localStorage.getItem('daigou_v12_7')) || [];
-        let deletedItems = JSON.parse(localStorage.getItem('daigou_v12_7_deleted')) || [];
-        let openIds = JSON.parse(localStorage.getItem('daigou_v12_7_openIds')) || [];
+        let items = JSON.parse(localStorage.getItem('daigou_v12_8')) || [];
+        let deletedItems = JSON.parse(localStorage.getItem('daigou_v12_8_deleted')) || [];
+        let openIds = JSON.parse(localStorage.getItem('daigou_v12_8_openIds')) || [];
         let currentFilter = "ALL";
         const DEFAULT_MARGIN = 45;
+
+        // CP 值排序定義 (藥品: 藥局>Boots>7-11; 零食: BigC>Lotus>7-11; 美妝: Boots>Watsons>藥局)
+        const CP_RANK = {
+            "藥品": ["藥局", "Boots", "Watsons", "7-11"],
+            "零食": ["Big C", "Lotus's", "7-11"],
+            "美妝": ["Boots", "Watsons", "藥局", "7-11"],
+            "一般": ["Big C", "Lotus's", "Boots", "7-11"]
+        };
 
         function addLog(msg) {
             const log = document.getElementById('logList');
@@ -81,14 +90,18 @@
             log.prepend(div);
         }
 
+        function getCategory(name) {
+            const n = name.toLowerCase();
+            if (n.match(/蜈蚣|膏|藥|蜂膠|牙膏|鼻通/)) return "藥品";
+            if (n.match(/牙刷|凡士林|防曬|精華|洗面/)) return "美妝";
+            if (n.match(/海苔|魷魚|餅乾|奶茶|蜂蜜|牛乳片|pocky/)) return "零食";
+            return "一般";
+        }
+
         function autoClassify(it) {
             if (it.best_store) return it.best_store;
-            const n = it.n.toLowerCase();
-            if (n.match(/蜈蚣|膏|藥|蜂膠|牙膏|鼻通/)) return "藥局";
-            if (n.match(/牙刷|凡士林|防曬|精華|洗面/)) return "Boots";
-            if (n.match(/海苔|魷魚|餅乾|奶茶|蜂蜜/)) return "Big C";
-            if (n.match(/牛乳片|pocky/)) return "7-11";
-            return "Big C";
+            const cat = getCategory(it.n);
+            return CP_RANK[cat][0]; // 取該類別 CP 值排行第一的店家
         }
 
         function quickImport() {
@@ -99,7 +112,7 @@
                     const loc = autoClassify(it);
                     items.push({ ...it, id, q: 0, noteL: it.desc||"", noteR: "", img: "", margin: DEFAULT_MARGIN, loc, isCustomStore: false, alert: it.alert||"暫無採購提醒" });
                 });
-                save(); document.getElementById('importJson').value = ""; addLog("情報匯入成功");
+                save(); document.getElementById('importJson').value = ""; addLog("匯入成功：已自動鎖定最 CP 通路");
             } catch (e) { alert("格式錯誤"); }
         }
 
@@ -107,21 +120,14 @@
             const it = items[idx];
             const p = `NT$${it.sp}`;
             const market = it.majority ? `(台灣行情約 $${it.majority})` : "";
-            const advantage = it.noteL || "這款質感真的好到哭";
+            const advantage = it.noteL || "質感真的好到哭";
             let text = "";
-            
-            if(type === 'xhs') {
-                text = `【 ${it.n} 】泰國必買連線✨\n幫大家在曼谷現場挖到這款，質感真的好到哭😭\n${advantage}\n成分超級有誠意，效果完全不輸專櫃級別。\n💰 連線價：${p}\n#泰國代購 #曼谷連線 #好物分享`;
-            } else if(type === 'ig') {
-                text = `Bangkok Live 🇹🇭 現場實拍！\n人在泰國幫大家連線追加中🔥\n【 ${it.n} 】${advantage}\n預購價：${p}\n📥 想要的私訊截圖+1！`;
-            } else if(type === 'threads') {
-                text = `說真的，這款【 ${it.n} 】直接解決超煩的問題。\n人在曼谷現場幫大家搶幾組回台灣！\n${advantage}\n${p} ${market}，私我截圖+1。`;
-            } else if(type === 'master') {
-                text = `遇到這事真的會瘋掉...😭\n剛在曼谷現場幫大家連線挖寶【 ${it.n} 】！\n\n如果你也有這種困擾，這款直接解決了超煩的問題。我看了一下成分，質感真的很有誠意。人在現場幫大家搶幾組，行李還有空間可以帶！\n\n💰 連線價：${p} ${market}\n🛒 ${advantage}\n想要的私訊截圖+1喔！\n#曼谷連線 #泰國代購`;
-            }
-
+            if(type === 'xhs') text = `【 ${it.n} 】泰國必買連線✨\n在曼谷現場挖到這款，質感真的好到哭😭\n${advantage}\n💰 連線價：${p}\n#泰國代購 #曼谷連線 #好物分享`;
+            else if(type === 'ig') text = `Bangkok Live 🇹🇭 現場實拍！\n人在泰國連線追加中🔥\n【 ${it.n} 】${advantage}\n預購價：${p}\n📥 想要的私訊截圖+1！`;
+            else if(type === 'threads') text = `這款【 ${it.n} 】直接解決超煩的問題。\n人在曼谷現場幫大家搶幾組！\n${advantage}\n${p} ${market}，私我截圖+1。`;
+            else if(type === 'master') text = `遇到這事真的會瘋掉...😭\n剛在曼谷現場幫大家連線挖寶【 ${it.n} 】！\n如果你也有這種困擾，這款直接解決了超煩的問題。我看了一下成分，質感很有誠意。人在現場幫搶幾組，行李還有空間可以帶！\n💰 連線價：${p} ${market}\n🛒 ${advantage}\n想要的私訊截圖+1喔！\n#曼谷連線 #泰國代購`;
             navigator.clipboard.writeText(text);
-            alert(`✅ 已複製 ${type==='master'?'三合一精華':type.toUpperCase()} 文案！`);
+            alert(`✅ 已複製 ${type==='master'?'精華':type.toUpperCase()} 文案！`);
         }
 
         function deleteItem(id) {
@@ -130,7 +136,7 @@
             const item = items.splice(idx, 1)[0];
             deletedItems.push(item);
             save();
-            addLog(`已將 ${item.n} 移至回收站`);
+            addLog(`已移至回收站: ${item.n}`);
         }
 
         function restoreItem(id) {
@@ -139,11 +145,11 @@
             const item = deletedItems.splice(idx, 1)[0];
             items.push(item);
             save();
-            addLog(`已救回 ${item.n}！`);
+            addLog(`已救回: ${item.n}`);
         }
 
         function clearTrash() {
-            if(confirm('確定永久清空回收站？')) { deletedItems = []; save(); addLog('回收站已清空'); }
+            if(confirm('永久清空回收站？')) { deletedItems = []; save(); }
         }
 
         function render() {
@@ -170,6 +176,9 @@
                     const marginVal = ((profit / item.sp) * 100).toFixed(0);
                     const suggestedSP = Math.ceil(cost / (1 - (item.margin/100)));
                     tw += (item.w * item.q) / 1000; tp += (profit * item.q);
+                    
+                    const cat = getCategory(item.n);
+                    const otherRank = CP_RANK[cat].filter(s => s !== item.loc).join(" > ");
 
                     let marginColor = "var(--primary)";
                     if (marginVal < 20) marginColor = "var(--danger)";
@@ -191,8 +200,9 @@
                                     <div>👤 行情<br><b>$${Math.round(cost*1.5)}~</b></div>
                                     <div>🧡 蝦皮<br><b>$${item.majority || '??'}</b></div>
                                 </div>
+                                <div class="other-stores-tip">💡 CP 通路排行：<b>${item.loc}</b> (首選) > ${otherRank}</div>
                                 <select class="custom-select" onchange="if(this.value==='CUSTOM'){items[${idx}].isCustomStore=true;}else{items[${idx}].isCustomStore=false;items[${idx}].loc=this.value;} save();" onclick="event.stopPropagation()">
-                                    <option value="${item.loc}">📍 當前：${item.loc}</option>
+                                    <option value="${item.loc}">📍 變更店家：${item.loc}</option>
                                     <option value="藥局">藥局</option><option value="Big C">Big C</option><option value="Boots">Boots</option><option value="7-11">7-11</option><option value="CUSTOM">➕ 自訂店家...</option>
                                 </select>
                                 ${item.isCustomStore ? `<input type="text" style="width:100%; padding:10px; border-radius:10px; border:1.5px solid var(--accent); margin-bottom:12px; box-sizing:border-box;" value="${item.loc}" onchange="items[${idx}].loc=this.value; save();" onclick="event.stopPropagation()">` : ''}
@@ -205,11 +215,11 @@
                                     <button class="btn-count" onclick="items[${idx}].q++; save(); event.stopPropagation();" style="color:var(--primary); border-color:var(--primary);">＋</button>
                                 </div>
                                 <div class="note-wrapper">
-                                    <textarea style="flex:1;" placeholder="✍️ 產品優勢" oninput="items[${idx}].noteL=this.value; localStorage.setItem('daigou_v12_7', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteL || ''}</textarea>
-                                    <textarea style="flex:1;" placeholder="👤 買家名單" oninput="items[${idx}].noteR=this.value; localStorage.setItem('daigou_v12_7', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteR || ''}</textarea>
+                                    <textarea style="flex:1;" placeholder="✍️ 產品優勢" oninput="items[${idx}].noteL=this.value; localStorage.setItem('daigou_v12_8', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteL || ''}</textarea>
+                                    <textarea style="flex:1;" placeholder="👤 買家名單" oninput="items[${idx}].noteR=this.value; localStorage.setItem('daigou_v12_8', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteR || ''}</textarea>
                                 </div>
                                 <div class="copy-section">
-                                    <button class="btn-copy-master" onclick="generateCopy(${idx}, 'master')">✨ 複製三合一濃縮精華 (推薦)</button>
+                                    <button class="btn-copy-master" onclick="generateCopy(${idx}, 'master')">✨ 複製三合一精華文案</button>
                                     <div class="copy-grid">
                                         <div class="btn-copy-small" onclick="generateCopy(${idx}, 'xhs')">小紅書風</div>
                                         <div class="btn-copy-small" onclick="generateCopy(${idx}, 'ig')">IG 限動風</div>
@@ -237,7 +247,7 @@
         function toggleCard(id) {
             const idx = openIds.indexOf(id);
             if(idx > -1) openIds.splice(idx, 1); else openIds.push(id);
-            localStorage.setItem('daigou_v12_7_openIds', JSON.stringify(openIds)); render();
+            localStorage.setItem('daigou_v12_8_openIds', JSON.stringify(openIds)); render();
         }
 
         function handleImg(e, idx) {
@@ -257,8 +267,8 @@
         }
 
         function save() { 
-            localStorage.setItem('daigou_v12_7', JSON.stringify(items)); 
-            localStorage.setItem('daigou_v12_7_deleted', JSON.stringify(deletedItems));
+            localStorage.setItem('daigou_v12_8', JSON.stringify(items)); 
+            localStorage.setItem('daigou_v12_8_deleted', JSON.stringify(deletedItems));
             render(); 
         }
         render();
