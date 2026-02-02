@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>泰國代購 12.9 - 曼谷連線完全體(成本可改版)</title>
+    <title>泰國代購 13.0 - 曼谷連線完全體(鍵盤穩定版)</title>
     <style>
         :root { --primary: #5d4037; --accent: #a89078; --bg: #fdfbf7; --card: #ffffff; --text: #1a1a1a; --sub: #78716c; --log-bg: #2d2a28; --gold: #b45309; --danger: #b91c1c; --safe: #166534; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 12px; padding-bottom: 100px; color: var(--text); -webkit-tap-highlight-color: transparent; }
@@ -56,7 +56,7 @@
     <div class="filter-bar" id="filterBar"></div>
 
     <div class="log-section">
-        <div class="log-container" id="logList">連線日誌：12.9 成本即時修正版啟動...</div>
+        <div class="log-container" id="logList">連線日誌：13.0 鍵盤穩定修正版啟動...</div>
         <textarea id="importJson" style="width:100%; height:45px; border-radius:12px; border:1px solid #e7e5e4; padding:8px; margin-top:10px;" placeholder="貼上 JSON 代碼包..."></textarea>
         <button onclick="quickImport()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:800; margin-top:10px; cursor:pointer;">📥 匯入情報與智慧分類</button>
     </div>
@@ -69,9 +69,9 @@
     </div>
 
     <script>
-        let items = JSON.parse(localStorage.getItem('daigou_v12_9')) || [];
-        let deletedItems = JSON.parse(localStorage.getItem('daigou_v12_9_deleted')) || [];
-        let openIds = JSON.parse(localStorage.getItem('daigou_v12_9_openIds')) || [];
+        let items = JSON.parse(localStorage.getItem('daigou_v13_0')) || [];
+        let deletedItems = JSON.parse(localStorage.getItem('daigou_v13_0_deleted')) || [];
+        let openIds = JSON.parse(localStorage.getItem('daigou_v13_0_openIds')) || [];
         let currentFilter = "ALL";
         const DEFAULT_MARGIN = 45;
 
@@ -111,7 +111,7 @@
                     const loc = autoClassify(it);
                     items.push({ ...it, id, q: 0, noteL: it.desc||"", noteR: "", img: "", margin: DEFAULT_MARGIN, loc, isCustomStore: false, alert: it.alert||"暫無採購提醒" });
                 });
-                save(); document.getElementById('importJson').value = ""; addLog("匯入成功：成本與通路已就緒");
+                save(); document.getElementById('importJson').value = ""; addLog("匯入成功");
             } catch (e) { alert("格式錯誤"); }
         }
 
@@ -207,12 +207,12 @@
                                 ${item.isCustomStore ? `<input type="text" style="width:100%; padding:10px; border-radius:10px; border:1.5px solid var(--accent); margin-bottom:12px; box-sizing:border-box;" value="${item.loc}" onchange="items[${idx}].loc=this.value; save();" onclick="event.stopPropagation()">` : ''}
                                 <div class="price-panel">
                                     <div style="font-size:11px; color:var(--sub); margin-bottom:10px;">
-                                        現場實購價 (฿): <input type="number" class="input-inline" value="${item.mp}" oninput="items[${idx}].mp=this.value; render();" onclick="event.stopPropagation()">
-                                        | 目標毛利: <input type="number" class="input-inline" value="${item.margin}" oninput="items[${idx}].margin=this.value; render();" onclick="event.stopPropagation()">%
+                                        現場實購價 (฿): <input type="number" class="input-inline" value="${item.mp}" onchange="items[${idx}].mp=this.value; render();" onclick="event.stopPropagation()">
+                                        | 目標毛利: <input type="number" class="input-inline" value="${item.margin}" onchange="items[${idx}].margin=this.value; render();" onclick="event.stopPropagation()">%
                                     </div>
                                     <div style="font-size:11px; color:var(--primary); margin-bottom:12px; font-weight:700;">建議售價：$${suggestedSP} (成本 NT$${Math.round(cost)})</div>
                                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                                        <span>實定價 $ <input type="number" class="input-price" value="${item.sp}" oninput="items[${idx}].sp=this.value; render();" onclick="event.stopPropagation()"></span>
+                                        <span>實定價 $ <input type="number" class="input-price" value="${item.sp}" onchange="items[${idx}].sp=this.value; render();" onclick="event.stopPropagation()"></span>
                                         <span style="color:${marginColor}; font-weight:800; font-size:1.1rem;">獲利: $${Math.round(profit * item.q)}</span>
                                     </div>
                                 </div>
@@ -221,8 +221,8 @@
                                     <button class="btn-count" onclick="items[${idx}].q++; save(); event.stopPropagation();" style="color:var(--primary); border-color:var(--primary);">＋</button>
                                 </div>
                                 <div class="note-wrapper">
-                                    <textarea style="flex:1;" placeholder="✍️ 產品優勢" oninput="items[${idx}].noteL=this.value; localStorage.setItem('daigou_v12_9', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteL || ''}</textarea>
-                                    <textarea style="flex:1;" placeholder="👤 買家名單" oninput="items[${idx}].noteR=this.value; localStorage.setItem('daigou_v12_9', JSON.stopPropagation())">${item.noteR || ''}</textarea>
+                                    <textarea style="flex:1;" placeholder="✍️ 產品優勢" oninput="items[${idx}].noteL=this.value; localStorage.setItem('daigou_v13_0', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteL || ''}</textarea>
+                                    <textarea style="flex:1;" placeholder="👤 買家名單" oninput="items[${idx}].noteR=this.value; localStorage.setItem('daigou_v13_0', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteR || ''}</textarea>
                                 </div>
                                 <div class="copy-section">
                                     <button class="btn-copy-master" onclick="generateCopy(${idx}, 'master')">✨ 複製三合一精華文案</button>
@@ -253,7 +253,7 @@
         function toggleCard(id) {
             const idx = openIds.indexOf(id);
             if(idx > -1) openIds.splice(idx, 1); else openIds.push(id);
-            localStorage.setItem('daigou_v12_9_openIds', JSON.stringify(openIds)); render();
+            localStorage.setItem('daigou_v13_0_openIds', JSON.stringify(openIds)); render();
         }
 
         function handleImg(e, idx) {
@@ -273,8 +273,8 @@
         }
 
         function save() { 
-            localStorage.setItem('daigou_v12_9', JSON.stringify(items)); 
-            localStorage.setItem('daigou_v12_9_deleted', JSON.stringify(deletedItems));
+            localStorage.setItem('daigou_v13_0', JSON.stringify(items)); 
+            localStorage.setItem('daigou_v13_0_deleted', JSON.stringify(deletedItems));
             render(); 
         }
         render();
