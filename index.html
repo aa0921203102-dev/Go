@@ -3,85 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>泰國代購 12.3 - 多重復原保險版</title>
+    <title>泰國代購 12.7 - 曼谷連線完全體(文案全開版)</title>
     <style>
-        :root { --primary: #5d4037; --accent: #a89078; --bg: #fdfbf7; --card: #ffffff; --text: #1a1a1a; --sub: #78716c; --log-bg: #2d2a28; --gold: #b45309; --danger: #b91c1c; }
+        :root { --primary: #5d4037; --accent: #a89078; --bg: #fdfbf7; --card: #ffffff; --text: #1a1a1a; --sub: #78716c; --log-bg: #2d2a28; --gold: #b45309; --danger: #b91c1c; --safe: #166534; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 12px; padding-bottom: 100px; color: var(--text); -webkit-tap-highlight-color: transparent; }
-        .summary-bar { display: flex; justify-content: space-around; background: var(--log-bg); color: white; padding: 16px; border-radius: 16px; position: sticky; top: 10px; z-index: 1000; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .summary-bar { display: flex; justify-content: space-around; background: var(--log-bg); color: white; padding: 16px; border-radius: 16px; position: sticky; top: 10px; z-index: 1000; margin-bottom: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         .summary-value { font-size: 1.1rem; font-weight: 800; color: #d6d3d1; }
+        .filter-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; white-space: nowrap; }
+        .filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid #d6d3d1; background: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .search-input { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #d6d3d1; box-sizing: border-box; margin-bottom: 12px; font-size: 14px; }
         .store-header { font-size: 0.95rem; font-weight: 700; color: var(--primary); background: #f5f5f4; padding: 10px 16px; border-radius: 12px; border: 1px solid #e7e5e4; display: flex; justify-content: space-between; margin-top: 24px; }
-        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-top: 12px; border: 1px solid #e7e5e4; }
+        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-top: 12px; border: 1px solid #e7e5e4; position: relative; }
         .card.active { border: 2.5px solid var(--primary); }
         .card-preview { display: grid; grid-template-columns: 80px 1fr auto; gap: 14px; align-items: center; cursor: pointer; }
         .item-img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: #fafaf9; border: 1px solid #e7e5e4; }
         .item-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
         .roi-tag { font-size: 10px; padding: 3px 10px; border-radius: 8px; font-weight: 900; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; border: 1px solid rgba(0,0,0,0.1); }
-        .score-val { font-size: 13px; margin-left: 2px; }
         .q-badge { background: var(--primary); color: white; padding: 6px 14px; border-radius: 12px; font-weight: 800; font-size: 1.2rem; }
         .details-area { display: none; padding-top: 16px; border-top: 1px solid #f5f5f4; margin-top: 16px; }
         .card.active .details-area { display: block; }
-        .custom-select { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid #d6d3d1; font-size: 14px; margin-bottom: 8px; color: var(--primary); font-weight: 600; background-color: #fff; }
+        .alert-box { font-size: 11px; background: #fffbeb; color: #92400e; border: 1px solid #fde68a; padding: 8px; border-radius: 8px; margin-bottom: 10px; line-height: 1.4; }
         .price-panel { background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 12px; padding: 12px; margin-bottom: 16px; }
-        .input-inline { width: 55px; padding: 4px; border: 1px solid var(--accent); border-radius: 6px; text-align: center; font-weight: bold; }
+        .market-info { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 10px; color: var(--sub); margin-bottom: 10px; text-align: center; background: #fff; padding: 8px; border-radius: 8px; border: 1px solid #eee; }
+        .input-inline { width: 45px; padding: 4px; border: 1px solid var(--accent); border-radius: 6px; text-align: center; font-weight: bold; }
         .input-price { width: 90px; padding: 8px; border: 2px solid var(--primary); border-radius: 8px; text-align: center; font-size: 1.1rem; font-weight: 800; color: var(--primary); }
-        .counter-row { display: flex; align-items: center; gap: 20px; margin: 20px 0; }
+        .custom-select { width: 100%; padding: 10px; border-radius: 10px; border: 1.5px solid #d6d3d1; font-size: 13px; margin-bottom: 8px; color: var(--primary); font-weight: 600; background: #fff; }
+        .counter-row { display: flex; align-items: center; gap: 20px; margin: 15px 0; }
         .btn-count { width: 56px; height: 56px; border-radius: 18px; border: 1px solid #d6d3d1; background: white; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .note-wrapper { display: flex; gap: 10px; margin-top: 10px; }
-        .note-wrapper textarea { min-height: 120px; border-radius: 12px; font-size: 14px; padding: 12px; box-sizing: border-box; border: 1px solid #e7e5e4; line-height: 1.6; }
-        .textarea-left { flex: 1.5; background: #fafaf9; border-color: #d6d3d1; }
-        .textarea-right { flex: 1; background: #ffffff; }
-        .copy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 20px; }
-        .btn-copy { padding: 12px 4px; font-size: 12px; border-radius: 10px; border: 1.5px solid #d6d3d1; background: #fff; color: var(--primary); cursor: pointer; font-weight: 700; text-align: center; }
+        .note-wrapper textarea { min-height: 100px; border-radius: 12px; font-size: 13px; padding: 10px; box-sizing: border-box; border: 1px solid #e7e5e4; }
+        .copy-section { margin-top: 15px; border-top: 1px solid #f5f5f4; padding-top: 15px; }
+        .btn-copy-master { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 800; margin-bottom: 8px; cursor: pointer; font-size: 13px; }
+        .copy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .btn-copy-small { padding: 10px 4px; font-size: 11px; border-radius: 8px; border: 1.5px solid #d6d3d1; background: #fff; color: var(--primary); font-weight: 700; cursor: pointer; text-align: center; }
         .btn-delete { margin-top: 20px; width: 100%; padding: 12px; background: #fff1f2; color: var(--danger); border: 1px solid #fecaca; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; }
-        .btn-undo-pill { background: #444; color: #fff; border: none; padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; margin-left: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .trash-section { margin-top: 50px; border-top: 2px dashed #d6d3d1; padding-top: 20px; }
+        .trash-title { font-size: 14px; font-weight: 800; color: var(--sub); margin-bottom: 10px; display: flex; justify-content: space-between; }
         .log-section { background: white; border-radius: 16px; padding: 12px; border: 1px solid #e7e5e4; margin-bottom: 15px; }
-        .log-container { height: 110px; overflow-y: auto; font-size: 12px; line-height: 1.8; color: var(--sub); }
-        input[type="file"] { display: none; }
+        .log-container { height: 70px; overflow-y: auto; font-size: 12px; color: var(--sub); }
     </style>
 </head>
 <body>
     <div class="summary-bar">
-        <div style="text-align:center;"><span style="font-size:11px; opacity:0.8;">行李重量 (kg)</span><span class="summary-value" id="tW">0.00</span></div>
-        <div style="text-align:center;"><span style="font-size:11px; opacity:0.8;">預算總獲利</span><span class="summary-value" id="tP">$0</span></div>
+        <div style="text-align:center;"><span style="font-size:10px; opacity:0.8;">匯率 (1฿=?)</span><br><input type="number" id="globalRate" value="1.01" step="0.01" style="width:50px; background:none; border:1px solid #fff; color:white; text-align:center;" onchange="render()"></div>
+        <div style="text-align:center;"><span style="font-size:10px; opacity:0.8;">行李重量</span><span class="summary-value" id="tW">0.00</span></div>
+        <div style="text-align:center;"><span style="font-size:10px; opacity:0.8;">預算獲利</span><span class="summary-value" id="tP">$0</span></div>
     </div>
-    <div class="log-section">
-        <div class="log-container" id="logList">對帳日誌：12.3 多重復原保險版已啟動 [2/2 曼谷連線]...</div>
-        <textarea id="importJson" style="width:100%; height:45px; border-radius:12px; border:1px solid #e7e5e4; padding:8px; margin-top:10px;" placeholder="在此貼上快速版 J 代碼..."></textarea>
-        <button onclick="quickImport()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:800; margin-top:10px;">📥 匯入戰略情報包</button>
-    </div>
-    <div id="list"></div>
-    <script>
-        let items = JSON.parse(localStorage.getItem('daigou_v12_3')) || [];
-        let openIds = JSON.parse(localStorage.getItem('daigou_v12_3_openIds')) || [];
-        let deleteStack = []; // 多重復原棧
-        const RATE = 1.01;
 
-        function addLog(msg, undoable = false) {
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜尋產品、買家或商店..." oninput="render()">
+    <div class="filter-bar" id="filterBar"></div>
+
+    <div class="log-section">
+        <div class="log-container" id="logList">連線日誌：12.7 文案全開+精華版啟動...</div>
+        <textarea id="importJson" style="width:100%; height:45px; border-radius:12px; border:1px solid #e7e5e4; padding:8px; margin-top:10px;" placeholder="貼上 JSON 代碼包..."></textarea>
+        <button onclick="quickImport()" style="width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:12px; font-weight:800; margin-top:10px; cursor:pointer;">📥 匯入情報與智慧分類</button>
+    </div>
+
+    <div id="list"></div>
+
+    <div class="trash-section" id="trashArea">
+        <div class="trash-title">🗑️ 回收站 (永久保留區) <button onclick="clearTrash()" style="font-size:10px; border:none; background:none; color:var(--danger); cursor:pointer;">清空</button></div>
+        <div id="trashList"></div>
+    </div>
+
+    <script>
+        let items = JSON.parse(localStorage.getItem('daigou_v12_7')) || [];
+        let deletedItems = JSON.parse(localStorage.getItem('daigou_v12_7_deleted')) || [];
+        let openIds = JSON.parse(localStorage.getItem('daigou_v12_7_openIds')) || [];
+        let currentFilter = "ALL";
+        const DEFAULT_MARGIN = 45;
+
+        function addLog(msg) {
             const log = document.getElementById('logList');
             const div = document.createElement('div');
-            div.style.borderBottom = "1px solid #f5f5f4";
-            let content = `<span style="color:#a8a29e;">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
-            if(undoable) content += `<button class="btn-undo-pill" onclick="undoDelete()">↩️ 復原 (${deleteStack.length})</button>`;
-            div.innerHTML = content;
+            div.innerHTML = `<span style="color:#a8a29e;">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
             log.prepend(div);
-            if(log.children.length > 25) log.lastChild.remove();
         }
 
-        function deleteItem(idx) {
-            const item = items[idx];
-            deleteStack.push({ data: JSON.parse(JSON.stringify(item)), index: idx }); // 深度備份
-            const name = item.n;
-            items.splice(idx, 1);
-            save();
-            addLog(`已刪除 ${name}`, true);
-        }
-
-        function undoDelete() {
-            if(deleteStack.length === 0) return;
-            const lastDeleted = deleteStack.pop();
-            items.splice(lastDeleted.index, 0, lastDeleted.data);
-            save();
-            addLog(`已救回 ${lastDeleted.data.n}！${deleteStack.length > 0 ? '(還有商品可復原)' : ''}`, deleteStack.length > 0);
+        function autoClassify(it) {
+            if (it.best_store) return it.best_store;
+            const n = it.n.toLowerCase();
+            if (n.match(/蜈蚣|膏|藥|蜂膠|牙膏|鼻通/)) return "藥局";
+            if (n.match(/牙刷|凡士林|防曬|精華|洗面/)) return "Boots";
+            if (n.match(/海苔|魷魚|餅乾|奶茶|蜂蜜/)) return "Big C";
+            if (n.match(/牛乳片|pocky/)) return "7-11";
+            return "Big C";
         }
 
         function quickImport() {
@@ -89,16 +96,148 @@
                 const data = JSON.parse(document.getElementById('importJson').value);
                 (Array.isArray(data) ? data : [data]).forEach(it => {
                     const id = Date.now() + Math.random();
-                    items.push({ ...it, id, q: 0, noteL: "", noteR: "", img: "", margin: 45, v: it.v || 2, isCustomStore: false });
+                    const loc = autoClassify(it);
+                    items.push({ ...it, id, q: 0, noteL: it.desc||"", noteR: "", img: "", margin: DEFAULT_MARGIN, loc, isCustomStore: false, alert: it.alert||"暫無採購提醒" });
                 });
                 save(); document.getElementById('importJson').value = ""; addLog("情報匯入成功");
             } catch (e) { alert("格式錯誤"); }
         }
 
+        function generateCopy(idx, type) {
+            const it = items[idx];
+            const p = `NT$${it.sp}`;
+            const market = it.majority ? `(台灣行情約 $${it.majority})` : "";
+            const advantage = it.noteL || "這款質感真的好到哭";
+            let text = "";
+            
+            if(type === 'xhs') {
+                text = `【 ${it.n} 】泰國必買連線✨\n幫大家在曼谷現場挖到這款，質感真的好到哭😭\n${advantage}\n成分超級有誠意，效果完全不輸專櫃級別。\n💰 連線價：${p}\n#泰國代購 #曼谷連線 #好物分享`;
+            } else if(type === 'ig') {
+                text = `Bangkok Live 🇹🇭 現場實拍！\n人在泰國幫大家連線追加中🔥\n【 ${it.n} 】${advantage}\n預購價：${p}\n📥 想要的私訊截圖+1！`;
+            } else if(type === 'threads') {
+                text = `說真的，這款【 ${it.n} 】直接解決超煩的問題。\n人在曼谷現場幫大家搶幾組回台灣！\n${advantage}\n${p} ${market}，私我截圖+1。`;
+            } else if(type === 'master') {
+                text = `遇到這事真的會瘋掉...😭\n剛在曼谷現場幫大家連線挖寶【 ${it.n} 】！\n\n如果你也有這種困擾，這款直接解決了超煩的問題。我看了一下成分，質感真的很有誠意。人在現場幫大家搶幾組，行李還有空間可以帶！\n\n💰 連線價：${p} ${market}\n🛒 ${advantage}\n想要的私訊截圖+1喔！\n#曼谷連線 #泰國代購`;
+            }
+
+            navigator.clipboard.writeText(text);
+            alert(`✅ 已複製 ${type==='master'?'三合一精華':type.toUpperCase()} 文案！`);
+        }
+
+        function deleteItem(id) {
+            const idx = items.findIndex(it => it.id === id);
+            if (idx === -1) return;
+            const item = items.splice(idx, 1)[0];
+            deletedItems.push(item);
+            save();
+            addLog(`已將 ${item.n} 移至回收站`);
+        }
+
+        function restoreItem(id) {
+            const idx = deletedItems.findIndex(it => it.id === id);
+            if (idx === -1) return;
+            const item = deletedItems.splice(idx, 1)[0];
+            items.push(item);
+            save();
+            addLog(`已救回 ${item.n}！`);
+        }
+
+        function clearTrash() {
+            if(confirm('確定永久清空回收站？')) { deletedItems = []; save(); addLog('回收站已清空'); }
+        }
+
+        function render() {
+            const rate = parseFloat(document.getElementById('globalRate').value);
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('list'); 
+            const trashContainer = document.getElementById('trashList');
+            container.innerHTML = ""; trashContainer.innerHTML = "";
+            let tw = 0, tp = 0;
+
+            const stores = ["ALL", ...new Set(items.map(it => it.loc))];
+            document.getElementById('filterBar').innerHTML = stores.map(s => `<div class="filter-btn ${currentFilter===s?'active':''}" onclick="currentFilter='${s}';render()">${s==="ALL"?'全部':s}</div>`).join('');
+
+            const filteredItems = items.filter(it => (it.n+it.noteR+it.loc).toLowerCase().includes(search) && (currentFilter === "ALL" || it.loc === currentFilter));
+            const currentStores = [...new Set(filteredItems.map(it => it.loc))];
+            
+            currentStores.sort().forEach(store => {
+                const storeItems = filteredItems.filter(it => it.loc === store);
+                container.innerHTML += `<div class="store-header">📍 ${store}</div>`;
+                storeItems.forEach(item => {
+                    const idx = items.indexOf(item);
+                    const cost = item.mp * rate;
+                    const profit = item.sp - cost;
+                    const marginVal = ((profit / item.sp) * 100).toFixed(0);
+                    const suggestedSP = Math.ceil(cost / (1 - (item.margin/100)));
+                    tw += (item.w * item.q) / 1000; tp += (profit * item.q);
+
+                    let marginColor = "var(--primary)";
+                    if (marginVal < 20) marginColor = "var(--danger)";
+                    else if (marginVal > 45) marginColor = "var(--gold)";
+
+                    const isActive = openIds.includes(item.id) ? 'active' : '';
+                    container.innerHTML += `
+                        <div class="card ${isActive}">
+                            <div class="card-preview" onclick="toggleCard(${item.id})">
+                                <label onclick="event.stopPropagation()"><img src="${item.img || 'https://via.placeholder.com/80?text=實物'}" class="item-img"><input type="file" accept="image/*" style="display:none" onchange="handleImg(event, ${idx})"></label>
+                                <div style="flex:1;"><span class="item-title">${item.n}</span>
+                                    <div class="roi-tag" style="color:${marginColor}; border-color:${marginColor}44;">毛利 ${marginVal}%</div>
+                                </div><div class="q-badge">${item.q}</div>
+                            </div>
+                            <div class="details-area">
+                                <div class="alert-box">⚠️ 採購提醒：${item.alert}</div>
+                                <div class="market-info">
+                                    <div>🇹🇭 當地<br><b>฿${item.lp}~${item.mp}</b></div>
+                                    <div>👤 行情<br><b>$${Math.round(cost*1.5)}~</b></div>
+                                    <div>🧡 蝦皮<br><b>$${item.majority || '??'}</b></div>
+                                </div>
+                                <select class="custom-select" onchange="if(this.value==='CUSTOM'){items[${idx}].isCustomStore=true;}else{items[${idx}].isCustomStore=false;items[${idx}].loc=this.value;} save();" onclick="event.stopPropagation()">
+                                    <option value="${item.loc}">📍 當前：${item.loc}</option>
+                                    <option value="藥局">藥局</option><option value="Big C">Big C</option><option value="Boots">Boots</option><option value="7-11">7-11</option><option value="CUSTOM">➕ 自訂店家...</option>
+                                </select>
+                                ${item.isCustomStore ? `<input type="text" style="width:100%; padding:10px; border-radius:10px; border:1.5px solid var(--accent); margin-bottom:12px; box-sizing:border-box;" value="${item.loc}" onchange="items[${idx}].loc=this.value; save();" onclick="event.stopPropagation()">` : ''}
+                                <div class="price-panel">
+                                    <div style="font-size:11px; color:var(--sub); margin-bottom:8px;">目標毛利 <input type="number" class="input-inline" value="${item.margin}" oninput="items[${idx}].margin=this.value; render();" onclick="event.stopPropagation()"> % | 建議售價：<b>$${suggestedSP}</b></div>
+                                    <div style="display:flex; justify-content:space-between; align-items:center;"><span>實定價 $ <input type="number" class="input-price" value="${item.sp}" oninput="items[${idx}].sp=this.value; render();" onclick="event.stopPropagation()"></span><span style="color:${marginColor}; font-weight:700;">獲利: $${Math.round(profit * item.q)}</span></div>
+                                </div>
+                                <div class="counter-row">
+                                    <button class="btn-count" onclick="items[${idx}].q=Math.max(0,items[${idx}].q-1); save(); event.stopPropagation();">－</button>
+                                    <button class="btn-count" onclick="items[${idx}].q++; save(); event.stopPropagation();" style="color:var(--primary); border-color:var(--primary);">＋</button>
+                                </div>
+                                <div class="note-wrapper">
+                                    <textarea style="flex:1;" placeholder="✍️ 產品優勢" oninput="items[${idx}].noteL=this.value; localStorage.setItem('daigou_v12_7', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteL || ''}</textarea>
+                                    <textarea style="flex:1;" placeholder="👤 買家名單" oninput="items[${idx}].noteR=this.value; localStorage.setItem('daigou_v12_7', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteR || ''}</textarea>
+                                </div>
+                                <div class="copy-section">
+                                    <button class="btn-copy-master" onclick="generateCopy(${idx}, 'master')">✨ 複製三合一濃縮精華 (推薦)</button>
+                                    <div class="copy-grid">
+                                        <div class="btn-copy-small" onclick="generateCopy(${idx}, 'xhs')">小紅書風</div>
+                                        <div class="btn-copy-small" onclick="generateCopy(${idx}, 'ig')">IG 限動風</div>
+                                        <div class="btn-copy-small" onclick="generateCopy(${idx}, 'threads')">脆友誠實風</div>
+                                    </div>
+                                </div>
+                                <button class="btn-delete" onclick="event.stopPropagation(); deleteItem(${item.id});">🗑️ 刪除並移至回收站</button>
+                            </div>
+                        </div>`;
+                });
+            });
+
+            deletedItems.forEach(item => {
+                trashContainer.innerHTML += `
+                    <div style="background:#fff; padding:10px; border-radius:10px; border:1px solid #eee; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size:12px; color:var(--sub);">${item.n}</span>
+                        <button onclick="restoreItem(${item.id})" style="background:var(--primary); color:white; border:none; padding:4px 10px; border-radius:6px; font-size:11px; cursor:pointer;">救回</button>
+                    </div>`;
+            });
+
+            document.getElementById('tW').innerText = tw.toFixed(2);
+            document.getElementById('tP').innerText = `$${Math.round(tp)}`;
+        }
+
         function toggleCard(id) {
             const idx = openIds.indexOf(id);
             if(idx > -1) openIds.splice(idx, 1); else openIds.push(id);
-            localStorage.setItem('daigou_v12_3_openIds', JSON.stringify(openIds)); render();
+            localStorage.setItem('daigou_v12_7_openIds', JSON.stringify(openIds)); render();
         }
 
         function handleImg(e, idx) {
@@ -110,98 +249,17 @@
                     const canvas = document.createElement('canvas'); const MAX_WIDTH = 150;
                     const scale = MAX_WIDTH / img.width; canvas.width = MAX_WIDTH; canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    items[idx].img = canvas.toDataURL('image/jpeg', 0.6); save(); addLog(`拍好實物圖`);
+                    items[idx].img = canvas.toDataURL('image/jpeg', 0.6); save();
                 };
                 img.src = event.target.result;
             };
             reader.readAsDataURL(file);
         }
 
-        function generateCopy(idx, style) {
-            const it = items[idx]; const p = `NT$${it.sp}`; const detail = it.desc || "泰國連線必囤神物！";
-            const head = `【 ${it.n} 】\n`;
-            let text = "";
-            if(style === 'xhs') text = `${head}泰國必買推薦✨ 質感真的好到哭😭\n${detail}\n💰 預購價：${p}\n📍 採購：${it.loc}\n#泰國代購 #曼谷連線`;
-            else if(style === 'ig') text = `${head}Bangkok Live 🇹🇭 現場實拍！\n🛒 追加中🔥 ${detail}\n價格：${p}\n📥 私訊截圖+1`;
-            else text = `${head}說真的，如果妳跟我一樣有這種困擾...\n${detail}\n這款直接解決我的大痛點。一組 ${p}，想要的私訊截圖+1。`;
-            navigator.clipboard.writeText(text); alert(`✅ 已複製專屬文案！`);
-        }
-
-        function save() { localStorage.setItem('daigou_v12_3', JSON.stringify(items)); render(); }
-
-        function render() {
-            const container = document.getElementById('list'); container.innerHTML = "";
-            let tw = 0, tp = 0;
-            const currentStores = [...new Set(items.map(it => it.loc))];
-            currentStores.sort().forEach(store => {
-                const storeItems = items.filter(it => it.loc === store);
-                let storeW = 0; storeItems.forEach(si => storeW += (si.w * si.q) / 1000);
-                container.innerHTML += `<div class="store-header">📍 ${store} <span>${storeW.toFixed(2)} kg</span></div>`;
-                storeItems.forEach(item => {
-                    const idx = items.indexOf(item);
-                    const costPerUnit = item.mp * RATE;
-                    const profitPerUnit = item.sp - costPerUnit;
-                    tw += (item.w * item.q) / 1000; tp += (profitPerUnit * item.q);
-                    let score = (profitPerUnit / (item.w * item.v)) * 30;
-                    score = Math.min(10.0, Math.max(1.0, score)).toFixed(1);
-                    let roiLabel = "📦 搬運"; let roiColor = "#78716c"; let roiBg = "#f5f5f4";
-                    if (profitPerUnit > 1000 || score >= 9.0) { roiLabel = "💎 精品"; roiColor = "#991b1b"; roiBg = "#fee2e2"; }
-                    else if (score >= 7.0) { roiLabel = "🔥 金礦"; roiColor = "#92400e"; roiBg = "#fef3c7"; }
-                    else if (score >= 5.0) { roiLabel = "✅ 穩定"; roiColor = "#166534"; roiBg = "#dcfce7"; }
-                    else if (score >= 3.0) { roiLabel = "⚖️ 合理"; roiColor = "#374151"; roiBg = "#f3f4f6"; }
-                    const isActive = openIds.includes(item.id) ? 'active' : '';
-                    const marginFactor = 1 - (item.margin / 100);
-                    const minSP = Math.ceil((item.lp * RATE) / marginFactor);
-                    const maxSP = Math.ceil((item.mp * RATE) / marginFactor);
-                    container.innerHTML += `
-                        <div class="card ${isActive}">
-                            <div class="card-preview" onclick="toggleCard(${item.id})">
-                                <label onclick="event.stopPropagation()"><img src="${item.img || 'https://via.placeholder.com/80?text=拍實物'}" class="item-img"><input type="file" accept="image/*" onchange="handleImg(event, ${idx})"></label>
-                                <div style="flex:1;"><span class="item-title">${item.n}</span>
-                                    <div class="roi-tag" style="background:${roiBg}; color:${roiColor}; border-color:${roiColor}33;">${roiLabel}<span class="score-val">${score}</span></div>
-                                    <div style="font-size:11px; color:var(--sub); margin-top:4px;">蝦皮行情多數價：<b>$${item.majority}</b></div>
-                                </div><div class="q-badge">${item.q}</div>
-                            </div>
-                            <div class="details-area">
-                                <div class="store-group">
-                                    <div style="display:flex; gap:8px;">
-                                        <select class="custom-select" style="flex:2;" onchange="if(this.value==='CUSTOM'){items[${idx}].isCustomStore=true;}else{items[${idx}].isCustomStore=false;items[${idx}].loc=this.value;} save();" onclick="event.stopPropagation()">
-                                            <option value="${item.loc}">📍 ${item.loc}</option>
-                                            <option value="Big C">Big C</option><option value="Lotus's">Lotus's</option>
-                                            <option value="Boots">Boots</option><option value="7-11">7-11</option>
-                                            <option value="藥局">藥局</option><option value="CUSTOM">➕ 自訂...</option>
-                                        </select>
-                                        <select class="custom-select" style="flex:1;" onchange="items[${idx}].v=this.value; save();" onclick="event.stopPropagation()">
-                                            <option value="${item.v || 2}">體積: ${item.v || 2}</option>
-                                            <option value="1">1</option><option value="2">2</option><option value="4">4</option><option value="5">5</option>
-                                        </select>
-                                    </div>
-                                    ${item.isCustomStore ? `<input type="text" style="width:100%; padding:10px; border-radius:8px; border:1.5px solid var(--accent); margin-top:8px; box-sizing:border-box;" value="${item.loc}" onchange="items[${idx}].loc=this.value; save();" onclick="event.stopPropagation()">` : ''}
-                                </div>
-                                <div class="price-panel">
-                                    <div style="font-size:12px; color:var(--sub); margin-bottom:8px;">🎯 毛利：<input type="number" class="input-inline" value="${item.margin}" oninput="items[${idx}].margin=this.value; render();" onclick="event.stopPropagation()"> % | 建議：$${minSP}~$${maxSP}</div>
-                                    <div style="display:flex; justify-content:space-between; align-items:center;"><span>定價 $ <input type="number" class="input-price" value="${item.sp}" oninput="items[${idx}].sp=this.value; render();" onclick="event.stopPropagation()"></span><span style="color:var(--primary); font-weight:700;">獲利: $${Math.round(profitPerUnit * item.q)}</span></div>
-                                </div>
-                                <div class="counter-row">
-                                    <button class="btn-count" onclick="items[${idx}].q=Math.max(0,items[${idx}].q-1); save(); event.stopPropagation();">－</button>
-                                    <button class="btn-count" onclick="items[${idx}].q++; save(); event.stopPropagation();" style="color:var(--primary); border-color:var(--primary);">＋</button>
-                                </div>
-                                <div class="note-wrapper">
-                                    <textarea class="textarea-left" placeholder="✍️ 細項" oninput="items[${idx}].noteL=this.value; localStorage.setItem('daigou_v12_3', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteL || ''}</textarea>
-                                    <textarea class="textarea-right" placeholder="👤 買家" oninput="items[${idx}].noteR=this.value; localStorage.setItem('daigou_v12_3', JSON.stringify(items))" onclick="event.stopPropagation()">${item.noteR || ''}</textarea>
-                                </div>
-                                <div class="copy-grid">
-                                    <div class="btn-copy" onclick="generateCopy(${idx}, 'xhs'); event.stopPropagation();">小紅書</div>
-                                    <div class="btn-copy" onclick="generateCopy(${idx}, 'ig')">IG</div>
-                                    <div class="btn-copy" onclick="generateCopy(${idx}, 'threads')">Threads</div>
-                                </div>
-                                <button class="btn-delete" onclick="deleteItem(${idx}); event.stopPropagation();">🗑️ 刪除此項產品</button>
-                            </div>
-                        </div>`;
-                });
-            });
-            document.getElementById('tW').innerText = tw.toFixed(2);
-            document.getElementById('tP').innerText = `$${Math.round(tp)}`;
+        function save() { 
+            localStorage.setItem('daigou_v12_7', JSON.stringify(items)); 
+            localStorage.setItem('daigou_v12_7_deleted', JSON.stringify(deletedItems));
+            render(); 
         }
         render();
     </script>
